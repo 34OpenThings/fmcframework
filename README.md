@@ -5,31 +5,17 @@ A simple framework for building small games with Unity.
 Features:
 
 * Simple customizable loading screen
+* Infinite runner game flow.
 * Save system
+* Automated and tweakable level system
 * GDPR compliance form
 * Analytics (using Firebase, but can be changed easily)
-* Banners, Intertitials, VideoAds. (Everything uses Admob except for videos, which use Unity)
+* Banners, Intertitials, VideoAds. (Everything uses Admob except for videos, which use UnityAds)
 
 ## Import guide
 
-* Create a new Unity project as usual
-* Add a unity gitignore ( https://drive.google.com/file/d/1OREp7UmeIWvRtsI8aA23ldIVeuekJi8H/view )
-* Run the following commands: 
-    ```
-    git init
-    git remote add origin https://pizzagit.drowne.com/fast-mobile-cycle/stopthefall.git
-    git add .
-    git commit -m "Initial commit"
-    git push -u origin master
-    
-    git subtree add --prefix Assets/_fmc https://pizzagit.drowne.com/fast-mobile-cycle/fmcframework.git master --squash
-    
-    mkdir Assets/_content
-    ```
-* Move any asset you use in _content. Treat the _content folder as your Assets folder.
-* Open FMC->Settings in the top menu. Set whatever setting you need.
-
-NOTE: Ignore Ads and Analytics. FMC is ready to support them and it's already calling them when needed. When you want to integrate them, just follow the guide below.
+This framework requires [NGUI](https://assetstore.unity.com/packages/tools/gui/ngui-next-gen-ui-2413) to work.
+To use the framework, just download the [FMC Toolkit](https://github.com/34OpenThings/fmctoolkit) and insert the link of this repo inside your config file.
 
 ## Usage guide
 
@@ -48,9 +34,10 @@ FMC is designed to ease the developing of _simple_ mobile games.
 ## What you have to do
 
 * Open FMC->Settings and set everything properly.
+* Open FMC->Game design tool and set everything properly. Default will be ok for most games.
 * Create a game scene and make the game. Quick tips:
     * Use fmc.events to enable/disable your gameobjects (see _fmc.events_).
-    * You usually need to increase the score. Use _fmc.game.Score += 10;_ to add 10 points.
+    * You usually need to increase the score. Use _fmc.game.Score();_ to add points. Points are retrieved from the Level System.
     * Tell fmc when there is a game over with _fmc.game.GameOver();_.
 * When the game is ready, integrate analytics and ads. The game will also work if you ignore this step. See below to know how to.
 
@@ -88,12 +75,8 @@ All fmc functions can be accessed by typing fmc. Check out the GameScene inside 
 
 Use this to access all game-related functions and properties. 
 
-* Setting game score:
-    * Get and set Score via fmc.game.Score, best score via fmc.game.BestScore. 
-    * You usually shouldn't set BestScore manually: it is automatically done by fmc when GameOver() is called.
+* Set Score via fmc.game.Score(). The amount of points to add is deduced from the current level by the Level System. 
 * Controlling and transitioning through game states:
-    * Call fmc.game.ResetGame() when you want to reset your game. This sets the Score to 0.
-    * Call fmc.game.StartGame() when you want to start the game. This can also be done after a GameOver to give the player a second chance.
     * Call fmc.game.GameOver() when the player loses. This sets the BestScore if necessary.
     * Use fmc.game.GameState to check the current game state. If you do this everytime, you might prefer hooking to an event using fmc.events.
 
@@ -111,7 +94,9 @@ Simply use:
 
 ### fmc.ads
 
-Use this to call ads. There are three types of ads: banners, interstitials (single image) and rewarded video ads.
+You should not care about ads: the FMC flow will take care of them, showing them basing on the game state.
+
+fmc.ads is used to show ads. There are three types of ads: banners, interstitials (single image) and rewarded video ads.
 
 * Banner can be shown at every position of the screen. By default it will appear at the bottom.
 * Interstitial ads can be loaded before being shown via fmc.ads.LoadInterstitialAd(). If you do not care about showing them quickly, just use fmc.ads.LoadAndShowInterstitialAd().
